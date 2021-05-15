@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title></title>
+</head>
+<body>
+
+
+
+
+<div id="app">
+	<form>
+		 <input type="text" name="name" v-model="username">
+		 <input type="text" name="description" v-model="password">
+		 <input type="submit" value="submit" @click="sendData($event)">
+	</form>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous"></script>
+<script>
+	function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+<script>
+	
+	let v = new Vue({
+		el: '#app',
+		data: {
+			username: '',
+			password: ''
+		},
+		methods:{
+			sendData: function(event){
+				event.preventDefault();
+				form = new FormData();
+				form.append('username', this.username);
+				form.append('password', this.password);
+
+				axios({
+					url: 'http://127.0.0.1:8000/api/register/',
+					data: form,
+					method: "POST",
+					headers: {
+						"X-CSRFToken": getCookie('csrftoken')
+					}
+				}).then(response => {
+					console.log('suc '+response);
+				}).catch(err => {
+					console.log('err '+JSON.stringify(err.response));
+				});
+			}
+		}
+	})
+
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+// @import 'fonts';
+
+/* BASE CSS CONFIGS -- */
+*{
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+    color: white;
+    direction: rtl;
+    font-family: iransansweb;
+}
+
+body, html{
+    height: 100%;
+    div#app{
+        height: 100%;
+        width: 100%;
+    }
+}
+/* BASE CSS CONFIGS -- */
+
+
+/* MIXINS -- */
+@mixin input{
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 15px;
+    width: 100%;
+    &:focus{
+        outline: none;
+    }
+    &::placeholder{
+        font-family: iransansweb;
+    }
+}
+
+@mixin button{
+    font-family: iransansweb;
+    color: white;
+    padding: 10px 50px;
+    background-color: #45b884;
+    border-radius: 50px;
+    width: auto;
+    border: none;
+}
+
+
+
+

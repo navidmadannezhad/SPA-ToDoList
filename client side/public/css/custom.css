@@ -1,0 +1,23 @@
+/* BASE CSS CONFIGS -- */
+* {
+  padding: 0px;
+  margin: 0px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  color: white;
+  direction: rtl;
+  font-family: iransansweb;
+}
+
+body, html {
+  height: 100%;
+}
+
+body div#app, html div#app {
+  height: 100%;
+  width: 100%;
+}
+
+/* BASE CSS CONFIGS -- */
+/* MIXINS -- */
+/*# sourceMappingURL=custom.css.map */
