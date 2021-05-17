@@ -3,10 +3,10 @@
 
         <div class="content">
             <form action="">
-                <input type="text" placeholder="نام کاربری...">
-                <input type="password" placeholder="رمز عبور...">
-                <input type="password" placeholder="تکرار رمز عبور...">
-                <router-link to="/panel" tag="button" class="submit">ثبت نام</router-link>
+                <input type="text" placeholder="نام کاربری..." v-model="username">
+                <input type="password" placeholder="رمز عبور..." v-model="password1">
+                <input type="password" placeholder="تکرار رمز عبور..." v-model="password2">
+                <button class="submit" @click="register($event)">ثبت نام</button>
             </form>
         </div>
 
@@ -15,7 +15,25 @@
 
 <script>
 export default {
-    
+    data: function(){
+        return{
+            username: '',
+            password1: '',
+            password2: ''
+        }
+    },
+
+    methods:{
+        register(event){
+            event.preventDefault();
+            let payload = {
+                username: this.username,
+                password1: this.password1,
+                password2: this.password2
+            };
+            this.$store.dispatch('register', payload);
+        }
+    }
 }
 </script>
 

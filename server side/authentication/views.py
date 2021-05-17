@@ -33,3 +33,16 @@ class Login(APIView):
 				return Response('unvalid credentials', status=400)
 		else:
 			return Response(serialized.errors, status=400)
+
+
+
+class AuthenticateToken(APIView):
+	def post(self, request):
+		recievedToken = request.data['token']
+		if(Token.objects.filter(token=recievedToken).exists()):
+			token = Token.objects.filter(token=recievedToken)
+			user = User.objects.get(token=token)
+			serialized_data = UserSerializer(user)
+			return Response(serialized_data.data, status=200)
+		else:
+			return Response('Token is not valid', status=400)

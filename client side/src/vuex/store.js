@@ -4,28 +4,30 @@ import axios from 'axios';
 
 Vue.use(Vuex);
 
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
 export const store = new Vuex.Store({
     state:{
-        numb: 1
+        tasks: [],
+        errors: [],
+        /* User auth token */
+        token: ''
     },
     mutations:{
-        addTask: function(){
+        /* Authentication methods */
+        register: function(state, args){
+            console.log(args);
+        },
+
+        login: function(){
+
+        },
+
+        logout: function(){
+
+        },
+
+
+
+        getTasks: function(state){
             axios({
                 url: 'http://127.0.0.1:8000/api/task-list/',
                 method: 'GET',
@@ -33,6 +35,26 @@ export const store = new Vuex.Store({
                     'X-CSRFToken': getCookie('csrftoken')
                 }
             }).then(response => {
+                state.tasks = response.data;
+                console.log(response.data);
+            }).catch(err => {
+                console.log(err.response);
+            })
+        },
+
+        createTask: function(state, arg){
+            axios({
+                url: 'http://127.0.0.1:8000/api/task-create/',
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                data: {
+                    title: arg.title,
+                    description: arg.description
+                }
+            }).then(response => {
+                state.tasks = response.data;
                 console.log(response.data);
             }).catch(err => {
                 console.log(err.response);
@@ -40,6 +62,33 @@ export const store = new Vuex.Store({
         }
     },
     actions:{
+        getTasks: function(context){
+            context.commit('getTasks');
+        },
 
+        createTask: function(context, payload){
+            let args = {
+                title: payload.title,
+                description: payload.description
+            }
+            context.commit('createTask', args);
+        },
+
+        register: function(context, payload){
+            let args = {
+                username: payload.username,
+                password1: payload.password1,
+                password2: payload.password2
+            };
+            context.commit('register', args);
+        },
+
+        login: function(context){
+            context.commit('login');
+        },
+
+        logout: function(context){
+            context.commit('logout');
+        },
     }
 })

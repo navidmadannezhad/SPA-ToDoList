@@ -71,7 +71,7 @@
                 </div>
 
                 <div class="menu">
-                    <router-link to="/home">خروج از پنل</router-link>
+                    <router-link to="/">خروج از پنل</router-link>
                     <router-link to="/about">درباره سازنده</router-link>
                 </div>
 
@@ -91,32 +91,7 @@ import addModal from './addModal.vue';
 export default {
     data: function(){
         return{
-            tasks: [
-                {
-                    id: 1,
-                    title: 'برنامه اول',
-                    description: 'توضیحات برنامه اول - ما تو این برنامه میخوایم به ترکیه حمله کنیم!',
-                    status: false
-                },
-                {
-                    id: 2,
-                    title: 'برنامه اول',
-                    description: 'توضیحات برنامه اول - ما تو این برنامه میخوایم به ترکیه حمله کنیم!',
-                    status: false
-                },
-                {
-                    id: 3,
-                    title: 'برنامه اول',
-                    description: 'توضیحات برنامه اول - ما تو این برنامه میخوایم به ترکیه حمله کنیم!',
-                    status: false
-                },
-                {
-                    id: 4,
-                    title: 'برنامه اول',
-                    description: 'توضیحات برنامه اول - ما تو این برنامه میخوایم به ترکیه حمله کنیم!',
-                    status: false
-                }
-            ]
+            tasks: this.$store.state.tasks
         }
     },
     components: {
@@ -208,19 +183,27 @@ export default {
             return pro;
         },
 
-        checkViewPortHeight: function(){
-            let viewPortHeight = document.innerHeight;
-            let panelComp = this.$refs.panelComp;
-            console.log(viewPortHeight);
-            panelComp.style.height = window.scrollHeight + 'px';
-        },
-
-        addTask: function(){
-            this.$store.commit('addTask');
+        getTasks: function(){
+            this.$store.dispatch('getTasks');
         }
     },
+
+    computed:{
+        storeTasks: function(){
+            return this.$store.state.tasks;
+        }
+    },
+
+    watch:{
+        storeTasks(){
+            this.tasks = this.storeTasks;
+            console.log('changed');
+        }
+    },
+
     mounted(){
-        this.addTask();
+        this.getTasks();
+
         // close the left menu when the user clicks on any where except the menu
         window.addEventListener('click', (event) => {
             console.log(event.target.parentNode);
