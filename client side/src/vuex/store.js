@@ -1,6 +1,8 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
 import axios from 'axios';
+import { getCookie } from '../csrf';
+import { router } from '../router/router';
 
 Vue.use(Vuex);
 
@@ -14,7 +16,23 @@ export const store = new Vuex.Store({
     mutations:{
         /* Authentication methods */
         register: function(state, args){
-            console.log(args);
+            axios({
+                url: 'http://127.0.0.1:8000/api/register/',
+                data: {
+                    username: args.username,
+                    password1: args.password1,
+                    password2: args.password2
+                },
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                method: 'POST'
+            }).then(response => {
+                window.localStorage.setItem('token', response.data);
+                router.push({name: 'panel'})
+            }).catch(error => {
+                console.log(error.response.data);
+            })
         },
 
         login: function(){
