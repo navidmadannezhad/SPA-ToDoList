@@ -48,18 +48,21 @@ export const router = new VueRouter({
 });
 
 /* Authentication manager -- */
-router.beforeEach((to, from, next)=>{
+router.beforeEach((from, to, next) => {
     let nextIsPanel = to.name == 'panel';
 
     if(nextIsPanel){
         if(isAuthenticated()){
             next();
+            console.log('apmoce');
         }else{
-            next({name: 'login'});
+            router.push({name: 'login'});
+            console.log('no');
         }
-    }else{
-        next();
     }
+    // next();
+    // let token = localStorage.getItem('token');
+    // tokenIsValid('72ff590fc9285f800ebb3c9aae5543f00214807e');
 });
 
 function isAuthenticated(){
@@ -75,15 +78,14 @@ function isAuthenticated(){
 function tokenIsValid(token){
     axios({
         url: 'http://127.0.0.1:8000/api/authenticate-token/',
-        method: 'POST',
-        data:{
-            token: token
+        data: {
+            'token': token
         },
         headers:{
             'X-CSRFToken': getCookie('csrftoken')
-        }
+        },
+        method: 'POST'
     }).then(response => {
-        window.localStorage.setItem(user, response.data);
         return true;
     }).catch(err => {
         return false;

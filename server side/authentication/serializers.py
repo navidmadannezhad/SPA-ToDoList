@@ -1,40 +1,48 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
+from rest_framework.validators import UniqueValidator
 
 class UserSerializer(serializers.ModelSerializer):
+	
+	password2 = serializers.CharField()
 
 	class Meta:
 		model = User
-		fields = "__all__"
+		fields = '__all__'
 		extra_kwargs = {
 			'username':{
-				'validators': ['blank']
+				'validators':[
+					UniqueValidator(queryset=User.objects.all(), message="نام کاربری قبلا ثبت شده!")
+				],
+				'error_messages':{
+					'blank': 'لطفا نام کاربریت رو وارد کن',
+				}
 			},
-			'username':{
-				'validators': ['blank']
+			'password':{
+				'error_messages':{
+					'blank': 'لطفا رمز عبورت رو وارد کن'
+				}
 			},
-			'username':{
-				'validators': ['blank']
-			}
+			'password2':{
+				'error_messages':{
+					'blank': 'لطفا رمز عبور دوم رو وارد کن'
+				}
+			},
 		}
 
-	def validate_username(self, value):
-		user = User.objects.filter(username=value)
-		if user.exists():
-			raise serializers.ValidationError('User already exists!')
-		return value
-
+	def create(self, validated_data):
+		user = User(
+			username=validated_data['username'],
+			password=make_password(validated_data['password'])
+		)
+		user.save()
+		return user
 
 	def validate_password2(self, value):
-		if validated_data['password'] != value:
-			raise serializers.ValidationError('First and second passwords are not the same')
+		data = self.get_initial()
+		if value != data['password']:
+			raise serializers.ValidationError('دو رمز عبور یکسان نیستند')
 		return value
-
-	def __init__(self, *args, **kwargs):
-		super(UserSerializer, self).__init__(*args, **kwargs)
-
-		self.fields['username'].error_messages['blank'] = u'لطفا نام کاربری را فراموش نکنید'
-		self.fields['password1'].error_messages['blank'] = u'رمز عبور خود را وارد کنید'
-
-
-	# validations must be tested, also the login process and task update, delete processes!
+		
+		

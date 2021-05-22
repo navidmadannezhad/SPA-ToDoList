@@ -20,7 +20,7 @@ export const store = new Vuex.Store({
                 url: 'http://127.0.0.1:8000/api/register/',
                 data: {
                     username: args.username,
-                    password1: args.password1,
+                    password: args.password,
                     password2: args.password2
                 },
                 headers: {
@@ -95,7 +95,7 @@ export const store = new Vuex.Store({
         register: function(context, payload){
             let args = {
                 username: payload.username,
-                password1: payload.password1,
+                password: payload.password,
                 password2: payload.password2
             };
             context.commit('register', args);

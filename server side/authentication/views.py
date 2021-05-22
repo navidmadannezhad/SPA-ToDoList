@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from .serializers import UserSerializer
@@ -39,10 +40,7 @@ class Login(APIView):
 class AuthenticateToken(APIView):
 	def post(self, request):
 		recievedToken = request.data['token']
-		if(Token.objects.filter(token=recievedToken).exists()):
-			token = Token.objects.filter(token=recievedToken)
-			user = User.objects.get(token=token)
-			serialized_data = UserSerializer(user)
-			return Response(serialized_data.data, status=200)
+		if(Token.objects.filter(key=recievedToken).exists()):
+			return Response('', status=200)
 		else:
 			return Response('Token is not valid', status=400)

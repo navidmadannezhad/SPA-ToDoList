@@ -109,7 +109,6 @@ export default {
                     taskBody.style.maxHeight = taskBody.scrollHeight + 'px';
                     taskBody.style.marginTop = '20px';
                 }
-                this.checkViewPortHeight();
             }
         },
 
