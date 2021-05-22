@@ -8,4 +8,4 @@ class Task(models.Model):
 	user = models.ForeignKey(User, related_name="task", on_delete=models.CASCADE)
 
 	def __str__(self):
-		return self.name
+		return self.title
