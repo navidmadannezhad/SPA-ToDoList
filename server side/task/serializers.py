@@ -17,16 +17,3 @@ class TaskSerializer(serializers.ModelSerializer):
 		instance.save()
 		return instance
 
-
-# validations --
-# title field - not blank / Script / Sql
-# 
-#
-#
-#
-#
-#
-#
-#
-#
-#

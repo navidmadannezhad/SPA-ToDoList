@@ -5,31 +5,14 @@ from rest_framework.validators import UniqueValidator
 
 class UserSerializer(serializers.ModelSerializer):
 	
-	password2 = serializers.CharField()
+	password = serializers.CharField(error_messages={'blank': 'Password is empty!'})
+	password2 = serializers.CharField(error_messages={'blank': 'Password2 is fucking empty!'})
+	username = serializers.CharField(error_messages={'blank': 'username is blank!'},validators=[UniqueValidator(queryset=User.objects.all(), message="Username has been used before in database!")])
 
 	class Meta:
 		model = User
 		fields = '__all__'
-		extra_kwargs = {
-			'username':{
-				'validators':[
-					UniqueValidator(queryset=User.objects.all(), message="نام کاربری قبلا ثبت شده!")
-				],
-				'error_messages':{
-					'blank': 'لطفا نام کاربریت رو وارد کن',
-				}
-			},
-			'password':{
-				'error_messages':{
-					'blank': 'لطفا رمز عبورت رو وارد کن'
-				}
-			},
-			'password2':{
-				'error_messages':{
-					'blank': 'لطفا رمز عبور دوم رو وارد کن'
-				}
-			},
-		}
+
 
 	def create(self, validated_data):
 		user = User(
@@ -39,10 +22,11 @@ class UserSerializer(serializers.ModelSerializer):
 		user.save()
 		return user
 
-	def validate_password2(self, value):
-		data = self.get_initial()
-		if value != data['password']:
-			raise serializers.ValidationError('دو رمز عبور یکسان نیستند')
-		return value
+
+	def validate(self, data):
+		if data['password'] != data['password2']:
+			raise serializers.ValidationError('Passwords are not the same!')
+		return data
+
 		
 		

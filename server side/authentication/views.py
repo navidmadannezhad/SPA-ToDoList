@@ -31,7 +31,7 @@ class Login(APIView):
 				token = Token.objects.get(user=user)
 				return Response(token.key, status=200)
 			else:
-				return Response('unvalid credentials', status=400)
+				return Response('invalid credentials', status=400)
 		else:
 			return Response(serialized.errors, status=400)
 
