@@ -1,6 +1,8 @@
 <template>
     <div class="register-comp">
 
+        <message-component></message-component>
+
         <div class="content">
             <form action="">
                 <input type="text" placeholder="نام کاربری..." v-model="username">
@@ -10,16 +12,27 @@
             </form>
         </div>
 
+
+        <button @click="launchMessageComponent">Launch msg component</button>
     </div>
 </template>
 
 <script>
+import messageComponent from '../message.vue';
+import { msgLaunchMixin } from 'mixins';
 export default {
+    mixins: [
+        msgLaunchMixin,
+    ],
+    components:{
+        'message-component': messageComponent
+    },
     data: function(){
         return{
             username: '',
             password: '',
-            password2: ''
+            password2: '',
+            messages: []
         }
     },
 
@@ -32,6 +45,12 @@ export default {
                 password2: this.password2
             };
             this.$store.dispatch('register', payload);
+        }
+    },
+
+    watch:{
+        messages(){
+            this.launchMessageComponent(this.messages);
         }
     }
 }
