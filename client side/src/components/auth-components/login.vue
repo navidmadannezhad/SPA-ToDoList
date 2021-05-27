@@ -1,6 +1,8 @@
 <template>
     <div class="login-comp">
 
+        <message-component></message-component>
+
         <div class="content">
             <form action="">
                 <input type="text" placeholder="نام کاربری...">
@@ -13,8 +15,11 @@
 </template>
 
 <script>
+import messageComponent from '../message.vue';
 export default {
-    
+    components:{
+        'message-component': messageComponent
+    }
 }
 </script>
 

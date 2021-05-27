@@ -9,7 +9,7 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
     state:{
         tasks: [],
-        errors: [],
+        messages: [],
         /* User auth token */
         token: ''
     },
@@ -29,9 +29,19 @@ export const store = new Vuex.Store({
                 method: 'POST'
             }).then(response => {
                 window.localStorage.setItem('token', response.data);
-                router.push({name: 'panel'})
+                setTimeout(()=>{
+                    router.push({name: 'panel'});
+                },2000);
             }).catch(error => {
-                console.log(error.response.data);
+                let messages = error.response.data;
+
+                Object.keys(messages).forEach(key => {
+                    let message = {};
+                    message.content = messages[key][0];
+                    message.success = false;
+                    state.messages.push(object);
+                })
+                //console.log(error.response.data);
             })
         },
 
@@ -77,6 +87,10 @@ export const store = new Vuex.Store({
             }).catch(err => {
                 console.log(err.response);
             })
+        },
+
+        serverMessageOrganizer(state){
+
         }
     },
     actions:{
@@ -108,5 +122,9 @@ export const store = new Vuex.Store({
         logout: function(context){
             context.commit('logout');
         },
+
+        serverMessageOrganizer(context,){
+            context.commit('serverMessageOrganizer');
+        }
     }
 })

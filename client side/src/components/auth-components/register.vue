@@ -12,8 +12,6 @@
             </form>
         </div>
 
-
-        <button @click="launchMessageComponent">Launch msg component</button>
     </div>
 </template>
 

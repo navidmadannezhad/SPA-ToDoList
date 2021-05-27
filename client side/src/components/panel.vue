@@ -1,6 +1,8 @@
 <template>
     <div class="panel-comp" ref="panelComp">
         
+        <message-component></message-component>
+
         <div class="content">
             <nav ref="nav">
                 <div class="menu-button">
@@ -88,6 +90,8 @@
 
 <script>
 import addModal from './addModal.vue';
+import msgComponent from './message.vue';
+
 export default {
     data: function(){
         return{
@@ -95,7 +99,8 @@ export default {
         }
     },
     components: {
-        'add-modal': addModal
+        'add-modal': addModal,
+        'message-component': msgComponent
     },
     methods:{
         toggleTask: function(event){
