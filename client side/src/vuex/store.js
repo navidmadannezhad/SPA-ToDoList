@@ -9,9 +9,10 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
     state:{
         tasks: [],
-        messages: [],
+        serverMessagesBox: [],
+        serverMessageState: false,
         /* User auth token */
-        token: ''
+        token: '',
     },
     mutations:{
         /* Authentication methods */
@@ -34,14 +35,8 @@ export const store = new Vuex.Store({
                 },2000);
             }).catch(error => {
                 let messages = error.response.data;
-
-                Object.keys(messages).forEach(key => {
-                    let message = {};
-                    message.content = messages[key][0];
-                    message.success = false;
-                    state.messages.push(object);
-                })
-                //console.log(error.response.data);
+                state.serverMessagesBox = messages;
+                state.serverMessageState = false;
             })
         },
 
@@ -88,10 +83,6 @@ export const store = new Vuex.Store({
                 console.log(err.response);
             })
         },
-
-        serverMessageOrganizer(state){
-
-        }
     },
     actions:{
         getTasks: function(context){

@@ -7,7 +7,6 @@ const msgLaunchMixin = {
     }
 }
 
-
 export { msgLaunchMixin };
 
 

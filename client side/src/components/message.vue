@@ -1,7 +1,7 @@
 <template>
     <div class="msg-comp">
 
-        <div class="messages" v-if="messages.length != 0" ref="messages">
+        <div class="messages" ref="messages">
             <p class="message" v-bind:class="[ message.success ? 'success' : '', 'failure' ]" v-for="message in messages" v-bind:key="message.content">
                 {{ message.content }}
             </p>
@@ -13,22 +13,13 @@
 
 <script>
 export default {
+    props: [
+        'serverMessagesBox',
+        'serverMessageState'
+    ],
     data: function(){
         return{
-            messages: [
-                {
-                    content: 'لطفا پسوورد را وارد کنید',
-                    success: false 
-                },
-                {
-                    content: 'لطفا نام کاربرری را وارد کنید',
-                    success: false 
-                },
-                {
-                    content: 'ورود با موفقیت انجام شد',
-                    success: true 
-                },
-            ]
+            messages: []
         }
     },
 
@@ -47,7 +38,7 @@ export default {
 
             setTimeout(()=>{
                 this.hideMessages();
-            }, 2000);
+            }, 5000);
         },
 
         hideMessages(){
@@ -56,18 +47,41 @@ export default {
             Object.keys(messages).reverse().forEach((index) => {
                 setTimeout(()=>{
                     setTimeout(()=>{
-                        messages[index].style.right = '-1000px';
+                        messages[index].style.right = '-1000%';
                     },250)
                         messages[index].style.right = '10%';
                 }, index*100);
             });
+        },
+
+        // This function turns the server django message into client message, to render it more easily
+        // boxState shows wheater the message has came from the THEN block or the CATCH block, which means the success or failure of the operation
+        serverMessageOrganizer(serverMessagesBox, boxState){
+            let clientMessagesBox = []
+            // --
+
+            Object.keys(serverMessagesBox).forEach(serverMessage => {
+                let clientMessage = {
+                    content: '',
+                    success: boxState ? true : false
+                }
+
+                clientMessage.content = serverMessagesBox[serverMessage][0]
+                clientMessagesBox.push(clientMessage)
+            })
+
+            // --
+            return clientMessagesBox;
         }
     },
 
-    mounted(){
-        setTimeout(()=>{
-            this.showMessages();
-        }, 1000);
+    watch:{
+        serverMessagesBox(){
+            this.messages = this.serverMessageOrganizer(this.serverMessagesBox, this.serverMessageState)
+            setTimeout(()=>{
+                this.showMessages();
+            }, 1000);
+        }
     }
 }
 </script>

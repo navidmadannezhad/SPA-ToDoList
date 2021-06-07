@@ -1,7 +1,7 @@
 <template>
     <div class="register-comp">
 
-        <message-component></message-component>
+        <message-component :serverMessagesBox="serverMessagesBox" :serverMessageState="serverMessageState"></message-component>
 
         <div class="content">
             <form action="">
@@ -30,7 +30,6 @@ export default {
             username: '',
             password: '',
             password2: '',
-            messages: []
         }
     },
 
@@ -46,11 +45,15 @@ export default {
         }
     },
 
-    watch:{
-        messages(){
-            this.launchMessageComponent(this.messages);
+    computed:{
+        serverMessagesBox(){
+            return this.$store.state.serverMessagesBox;
+        },
+
+        serverMessageState(){
+            return this.$store.state.serverMessageState;
         }
-    }
+    },
 }
 </script>
 

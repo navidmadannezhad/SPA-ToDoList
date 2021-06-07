@@ -5,31 +5,13 @@ from rest_framework.validators import UniqueValidator
 
 class UserSerializer(serializers.ModelSerializer):
 	
-	password2 = serializers.CharField()
+	username = serializers.CharField(error_messages={'blank': 'لطفا نام کاربری خود را وارد کنید'}, validators=[UniqueValidator(queryset=User.objects.all(), message="نام کاربری قبلا ثبت شده است")])
+	password = serializers.CharField(error_messages={'blank': 'لطفا پسوورد خود را وارد کنید'})
+	password2 = serializers.CharField(error_messages={'blank': 'لطفا پسوورد خود را تکرار کنید'})
 
 	class Meta:
 		model = User
 		fields = '__all__'
-		extra_kwargs = {
-			'username':{
-				'validators':[
-					UniqueValidator(queryset=User.objects.all(), message="نام کاربری قبلا ثبت شده!")
-				],
-				'error_messages':{
-					'blank': 'لطفا نام کاربریت رو وارد کن',
-				}
-			},
-			'password':{
-				'error_messages':{
-					'blank': 'لطفا رمز عبورت رو وارد کن'
-				}
-			},
-			'password2':{
-				'error_messages':{
-					'blank': 'لطفا رمز عبور دوم رو وارد کن'
-				}
-			},
-		}
 
 	def create(self, validated_data):
 		user = User(
@@ -44,5 +26,12 @@ class UserSerializer(serializers.ModelSerializer):
 		if value != data['password']:
 			raise serializers.ValidationError('دو رمز عبور یکسان نیستند')
 		return value
-		
-		
+
+	def validate(self, data):
+		try:
+			data['username'].encode(encoding='ascii').decode('ascii')
+			data['password'].encode(encoding='ascii').decode('ascii')
+			data['password2'].encode(encoding='ascii').decode('ascii')
+		except UnicodeEncodeError:
+			raise serializers.ValidationError('ورودی ها تنها می‌توانند شامل حروف  و اعداد انگلیسی باشند')
+		return data		
