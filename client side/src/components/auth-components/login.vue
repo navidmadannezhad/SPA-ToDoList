@@ -1,13 +1,13 @@
 <template>
     <div class="login-comp">
 
-        <message-component></message-component>
+        <message-component :serverMessagesBox="serverMessagesBox" :serverMessageState="serverMessageState"></message-component>
 
         <div class="content">
             <form action="">
-                <input type="text" placeholder="نام کاربری...">
-                <input type="password" placeholder="رمز عبور...">
-                <router-link to="/panel" tag="button" class="submit">ورود</router-link>
+                <input type="text" placeholder="نام کاربری..." v-model="username">
+                <input type="password" placeholder="رمز عبور..." v-model="password">
+                <button class="submit" @click="login($event)">ورود</button>
             </form>
         </div>
 
@@ -19,6 +19,35 @@ import messageComponent from '../message.vue';
 export default {
     components:{
         'message-component': messageComponent
+    },
+
+    data(){
+        return{
+            username: '',
+            password: ''
+        }
+    },
+
+    methods:{
+        login(event){
+            event.preventDefault();
+            
+            let payload = {
+                username: this.username,
+                password: this.password
+            };
+            this.$store.dispatch('login', payload)
+        }
+    },
+
+    computed:{
+        serverMessagesBox(){
+            return this.$store.state.serverMessagesBox;
+        },
+
+        serverMessageState(){
+            return this.$store.state.serverMessageState;
+        }
     }
 }
 </script>

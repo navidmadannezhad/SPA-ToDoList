@@ -40,8 +40,21 @@ export const store = new Vuex.Store({
             })
         },
 
-        login: function(){
-
+        login: function(state, args){
+            axios({
+                url: 'http://127.0.0.1:8000/api/login/',
+                method: 'POST',
+                data: args,
+                headers:{
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            }).then(response => {
+                console.log(response.data);
+            }).catch(error => {
+                let messages = error.response.data;
+                state.serverMessagesBox = messages;
+                state.serverMessageState = false;
+            })
         },
 
         logout: function(){
@@ -106,8 +119,12 @@ export const store = new Vuex.Store({
             context.commit('register', args);
         },
 
-        login: function(context){
-            context.commit('login');
+        login: function(context, payload){
+            let args = {
+                username: payload.username,
+                password: payload.password
+            }
+            context.commit('login', args);
         },
 
         logout: function(context){
