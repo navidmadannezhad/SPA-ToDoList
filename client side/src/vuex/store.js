@@ -12,7 +12,7 @@ export const store = new Vuex.Store({
         serverMessagesBox: [],
         serverMessageState: false,
         /* User auth token */
-        token: '',
+        token: localStorage.getItem('token'),
     },
     mutations:{
         /* Authentication methods */
@@ -48,8 +48,16 @@ export const store = new Vuex.Store({
                 headers:{
                     'X-CSRFToken': getCookie('csrftoken')
                 }
+                
             }).then(response => {
-                console.log(response.data);
+                let successMessage = {
+                    'success': ['ورود با موفقیت انجام شد']
+                }
+                localStorage.setItem('user', response.data.user)
+                localStorage.setItem('token', response.data.token);
+                state.serverMessagesBox = successMessage;
+                state.serverMessageState = true;
+
             }).catch(error => {
                 let messages = error.response.data;
                 state.serverMessagesBox = messages;
@@ -58,7 +66,8 @@ export const store = new Vuex.Store({
         },
 
         logout: function(){
-
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
         },
 
 
@@ -68,7 +77,8 @@ export const store = new Vuex.Store({
                 url: 'http://127.0.0.1:8000/api/task-list/',
                 method: 'GET',
                 headers: {
-                    'X-CSRFToken': getCookie('csrftoken')
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Authorization': `Token ${state.token}`
                 }
             }).then(response => {
                 state.tasks = response.data;
@@ -83,19 +93,42 @@ export const store = new Vuex.Store({
                 url: 'http://127.0.0.1:8000/api/task-create/',
                 method: 'POST',
                 headers: {
-                    'X-CSRFToken': getCookie('csrftoken')
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Authorization': `Token ${state.token}`
                 },
                 data: {
                     title: arg.title,
                     description: arg.description
                 }
             }).then(response => {
-                state.tasks = response.data;
-                console.log(response.data);
+                let tasks = state.tasks;
+                state.tasks = [];
+                // shows "no messages" and then the tasks
+                setTimeout(()=>{
+                    state.tasks = tasks;
+                }, 1);
             }).catch(err => {
                 console.log(err.response);
             })
         },
+
+        deleteTask(state, arg){
+            let title = arg.title;
+            axios({
+                url: `http://127.0.0.1:8000/api/task-delete/${title}/`,
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Authorization': `Token ${state.token}`
+                }
+            }).then(response => {
+                state.serverMessagesBox = response.data;
+                state.serverMessageState = true;
+            }).catch(err => {
+                state.serverMessagesBox = err.response.data;
+                state.serverMessageState = false;
+            });
+        }
     },
     actions:{
         getTasks: function(context){
@@ -108,6 +141,10 @@ export const store = new Vuex.Store({
                 description: payload.description
             }
             context.commit('createTask', args);
+        },
+
+        deleteTask(context, payload){
+            context.commit('deleteTask', payload);
         },
 
         register: function(context, payload){
@@ -130,9 +167,5 @@ export const store = new Vuex.Store({
         logout: function(context){
             context.commit('logout');
         },
-
-        serverMessageOrganizer(context,){
-            context.commit('serverMessageOrganizer');
-        }
     }
 })

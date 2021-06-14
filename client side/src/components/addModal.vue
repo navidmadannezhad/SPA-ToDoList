@@ -39,7 +39,7 @@ export default {
 
         createTask: function(){
             this.$store.dispatch('createTask', {title: this.title, description: this.description});
-            console.log('sent!');
+            this.$parent.toggleAddModal();
         }
     },
     mounted(){

@@ -16,6 +16,7 @@
 
 <script>
 import messageComponent from '../message.vue';
+
 export default {
     components:{
         'message-component': messageComponent

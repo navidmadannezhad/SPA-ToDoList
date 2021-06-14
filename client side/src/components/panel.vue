@@ -29,7 +29,7 @@
                                 <i class="far fa-square" v-else></i>
                             </div>
                             <div class="trashcan">
-                                <i class="fas fa-trash-alt"></i>
+                                <i class="fas fa-trash-alt" @click="deleteTask(task.title)"></i>
                             </div>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
                 </div>
 
                 <div class="menu">
-                    <router-link to="/">خروج از پنل</router-link>
+                    <a href="" @click="logout">خروج از پنل</a>
                     <router-link to="/about">درباره سازنده</router-link>
                 </div>
 
@@ -189,6 +189,20 @@ export default {
 
         getTasks: function(){
             this.$store.dispatch('getTasks');
+        },
+
+        logout(){
+            this.$store.dispatch('logout');
+            this.$router.push('/');
+        },
+
+        deleteTask(title){
+            let payload = {
+                title: title
+            };
+            if(confirm('واقعا میخوای این تسک رو پاک کنی؟')){
+                this.$store.dispatch('deleteTask', payload);
+            }
         }
     },
 
@@ -210,7 +224,6 @@ export default {
 
         // close the left menu when the user clicks on any where except the menu
         window.addEventListener('click', (event) => {
-            console.log(event.target.parentNode);
             let dropLeft = this.$refs.dropLeft;
             let dropLeftIsOpen = dropLeft.style.width == '50%';
             let elementClasses = event.target.classList;

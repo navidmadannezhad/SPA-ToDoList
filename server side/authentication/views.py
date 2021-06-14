@@ -29,7 +29,11 @@ class Login(APIView):
 			user = authenticate(username=request.data['username'], password=request.data['password'])
 			if user is not None:
 				token = Token.objects.get(user=user)
-				return Response(token.key, status=200)
+				context = {
+					'token': token.key,
+					'user': user.username
+				}
+				return Response(context, status=200)
 			else:
 				context = {
 					'invalid': ['نام کاربری با پسوورد همخوانی ندارد']
@@ -44,6 +48,6 @@ class AuthenticateToken(APIView):
 	def post(self, request):
 		recievedToken = request.data['token']
 		if(Token.objects.filter(key=recievedToken).exists()):
-			return Response('', status=200)
+			return Response(True, status=200)
 		else:
-			return Response('Token is not valid', status=400)
+			return Response(False, status=400)

@@ -40,14 +40,20 @@ class TaskDelete(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, id):
+    def post(self, request, title):
         try:
-            task = Task.objects.get(id=id)
+            task = Task.objects.get(title=title)
             try: 
                 task.delete()
-                return Response('task deleted!', status=200)
+                context = {
+                    'success': 'برنامه با موفقیت حذف شد'
+                }
+                return Response(context, status=200)
             except:
-                return Response(serializer.errors, status=400)
+                context = {
+                    'failure': 'حذف برنامه با مشکل روبرو شد'
+                }
+                return Response(context, status=400)
         except:
             return Response('برنامه مورد نظر یافت نشد', status=400)
 
