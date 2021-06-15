@@ -6,6 +6,7 @@ import { router } from '../router/router';
 
 Vue.use(Vuex);
 
+
 export const store = new Vuex.Store({
     state:{
         tasks: [],
@@ -70,8 +71,7 @@ export const store = new Vuex.Store({
             localStorage.removeItem('user');
         },
 
-
-
+        /* Task methods */
         getTasks: function(state){
             axios({
                 url: 'http://127.0.0.1:8000/api/task-list/',
@@ -88,7 +88,13 @@ export const store = new Vuex.Store({
             })
         },
 
-        createTask: function(state, arg){
+    },
+    actions:{
+        getTasks: function(context){
+            context.commit('getTasks');
+        },
+
+        createTask: function({commit, state}, arg){
             axios({
                 url: 'http://127.0.0.1:8000/api/task-create/',
                 method: 'POST',
@@ -101,18 +107,13 @@ export const store = new Vuex.Store({
                     description: arg.description
                 }
             }).then(response => {
-                let tasks = state.tasks;
-                state.tasks = [];
-                // shows "no messages" and then the tasks
-                setTimeout(()=>{
-                    state.tasks = tasks;
-                }, 1);
+                commit('getTasks');
             }).catch(err => {
-                console.log(err.response);
+                console.log(err);
             })
         },
 
-        deleteTask(state, arg){
+        deleteTask({commit, state}, arg){
             let title = arg.title;
             axios({
                 url: `http://127.0.0.1:8000/api/task-delete/${title}/`,
@@ -122,29 +123,14 @@ export const store = new Vuex.Store({
                     'Authorization': `Token ${state.token}`
                 }
             }).then(response => {
-                state.serverMessagesBox = response.data;
-                state.serverMessageState = true;
+                commit('getTasks');
             }).catch(err => {
-                state.serverMessagesBox = err.response.data;
-                state.serverMessageState = false;
+                console.log(err);
             });
-        }
-    },
-    actions:{
-        getTasks: function(context){
-            context.commit('getTasks');
         },
 
-        createTask: function(context, payload){
-            let args = {
-                title: payload.title,
-                description: payload.description
-            }
-            context.commit('createTask', args);
-        },
-
-        deleteTask(context, payload){
-            context.commit('deleteTask', payload);
+        doneAndUndoneTask({commit, state}, arg){
+            console.log('doneAndUndoneTask '+arg.title);
         },
 
         register: function(context, payload){

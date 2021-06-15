@@ -25,8 +25,8 @@
                         <div class="task-title">{{ task.title }}</div>
                         <div class="buttons">
                             <div class="checkbox">
-                                <i class="far fa-check-square" v-if="task.status"></i>
-                                <i class="far fa-square" v-else></i>
+                                <i class="far fa-check-square" v-if="task.status" @click="doneAndUndoneTask(task.title)"></i>
+                                <i class="far fa-square" @click="doneAndUndoneTask(task.title)" v-else></i>
                             </div>
                             <div class="trashcan">
                                 <i class="fas fa-trash-alt" @click="deleteTask(task.title)"></i>
@@ -203,6 +203,13 @@ export default {
             if(confirm('واقعا میخوای این تسک رو پاک کنی؟')){
                 this.$store.dispatch('deleteTask', payload);
             }
+        },
+
+        doneAndUndoneTask(title){
+            let payload = {
+                title: title
+            }
+            this.$store.dispatch('doneAndUndoneTask', payload);
         }
     },
 
