@@ -1,12 +1,22 @@
 <template>
     <div class="modal-comp">
 
-        <div class="form">
+        <div class="form task-create-mode" v-if="!addModalIsEditModal">
             <input type="text" placeholder="نام برنامه..." ref="titleInput" v-model="title" v-on:input="checkTitleLength">
             <p class="validate-length">20/{{ title.length }}</p>
             <textarea placeholder="توضیحات..." v-model="description" v-on:input="checkDescLength" ref="description"></textarea>
             <p class="validate-length">120/{{ description.length }}</p>
+
             <button id="submit-plan" @click="createTask">ثبت برنامه</button>
+        </div>
+
+        <div class="form task-create-mode" v-else>
+            <input type="text" placeholder="نام برنامه..." ref="titleInput" v-model="editableTitle" v-on:input="checkTitleLength">
+            <p class="validate-length">20/{{ title.length }}</p>
+            <textarea placeholder="توضیحات..." v-model="editableDescription" v-on:input="checkDescLength" ref="description"></textarea>
+            <p class="validate-length">120/{{ description.length }}</p>
+
+            <button id="submit-plan" @click="updateTask">بروزرسانی</button>
         </div>
 
         <div class="loading">
@@ -19,10 +29,15 @@
 
 <script>
 export default {
+    props: [
+        'editableTitle',
+        'editableDescription',
+        'theNameOfTheTaskThatShouldBeUpdated'
+    ],
     data: function(){
         return{
             title: '', 
-            description: ''
+            description: '',
         }
     },
     methods: {
@@ -31,6 +46,7 @@ export default {
                 this.title = this.title.substring(0,20);
             }
         },
+
         checkDescLength: function(){
             if(this.description.length > 120){
                 this.description = this.description.substring(0,120);
@@ -40,8 +56,29 @@ export default {
         createTask: function(){
             this.$store.dispatch('createTask', {title: this.title, description: this.description});
             this.$parent.toggleAddModal();
+        },
+
+        updateTask(){
+            let data = {
+                title: this.editableTitle,
+                description: this.editableDescription, theNameOfTheTaskThatShouldBeUpdated: this.theNameOfTheTaskThatShouldBeUpdated
+            }
+            this.$store.dispatch('updateTask', data);
+            this.$parent.toggleAddModal();
+            this.$parent.emptyAddModalFromProp();
         }
     },
+
+    computed:{
+        addModalIsEditModal(){
+            if(this.editableTitle && this.editableDescription && this.theNameOfTheTaskThatShouldBeUpdated){
+                return true;
+            }else{
+                return false;
+            }
+        },
+    },
+
     mounted(){
         // close the add modal when the user clicks on any where except the add modal
         window.addEventListener('click', (event) => {
@@ -59,6 +96,7 @@ export default {
                      this.$parent.unBlurBackground().then(()=>{
                         setTimeout(()=>{
                             addModal.style.top = '-380px';
+                            this.$parent.emptyAddModalFromProp();
                         },250);
                     });
                 }                

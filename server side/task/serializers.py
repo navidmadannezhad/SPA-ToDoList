@@ -17,3 +17,21 @@ class TaskSerializer(serializers.ModelSerializer):
 		instance.save()
 		return instance
 
+
+
+
+
+class TaskCompleterSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Task
+		fields = ['title']
+
+	def update(self, instance, validated_data):
+		taskStatus = instance.status
+		if taskStatus is True:
+			instance.status = False
+		else:
+			instance.status = True
+
+		instance.save()
+		return instance

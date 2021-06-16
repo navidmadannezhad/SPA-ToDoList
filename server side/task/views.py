@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
+from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.generics import UpdateAPIView
-from .serializers import TaskSerializer
+from .serializers import TaskCompleterSerializer, TaskSerializer
 from task.models import Task
 from rest_framework.response import Response
 from django.contrib.auth.models import User
@@ -63,9 +64,9 @@ class TaskUpdate(UpdateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, id):
+    def post(self, request, title):
         try:
-            task = Task.objects.get(id=id)
+            task = Task.objects.get(title=title)
             serializer = TaskSerializer(instance=task, data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -73,3 +74,27 @@ class TaskUpdate(UpdateAPIView):
             return Response(serializer.errors, status=400)
         except:
             return Response('برنامه مورد نظر یافت نشد', status=400)
+
+
+
+
+
+
+class TaskCompleter(UpdateAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, title):
+        task = get_object_or_404(Task, title=title)
+        serializer = TaskCompleterSerializer(instance=task, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            context = {
+                'completer': 'وضعیت برنامه با موفقیت تغییر کرد'
+            }
+            return Response(context, status=200)
+        else:
+            context = {
+                'invalid': 'تغییر وضعیت برنامه با شکست روبرو شد'
+            }
+            return Response(serializer.errors, status=400)

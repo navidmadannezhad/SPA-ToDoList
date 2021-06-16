@@ -113,6 +113,26 @@ export const store = new Vuex.Store({
             })
         },
 
+        updateTask: function({commit, state}, arg){
+            let theNameOfTheTaskThatShouldBeUpdated = arg.theNameOfTheTaskThatShouldBeUpdated;
+            axios({
+                url: `http://127.0.0.1:8000/api/task-update/${theNameOfTheTaskThatShouldBeUpdated}/`,
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Authorization': `Token ${state.token}`
+                },
+                data: {
+                    title: arg.title,
+                    description: arg.description
+                }
+            }).then(response => {
+                commit('getTasks');
+            }).catch(err => {
+                console.log(err.response.data);
+            })
+        },
+
         deleteTask({commit, state}, arg){
             let title = arg.title;
             axios({
@@ -129,8 +149,20 @@ export const store = new Vuex.Store({
             });
         },
 
-        doneAndUndoneTask({commit, state}, arg){
-            console.log('doneAndUndoneTask '+arg.title);
+        changeTaskStatus({commit, state}, arg){
+            let title = arg.title;
+            axios({
+                url: `http://127.0.0.1:8000/api/task-complete/${title}`,
+                method: 'POST',
+                headers:{
+                    'Authorization': `Token ${state.token}`,
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            }).then(response => {
+                commit('getTasks');
+            }).catch(err => {
+                console.log(err.message);
+            })
         },
 
         register: function(context, payload){

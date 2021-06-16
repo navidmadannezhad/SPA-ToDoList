@@ -24,9 +24,12 @@
                     <div class="task-header">
                         <div class="task-title">{{ task.title }}</div>
                         <div class="buttons">
+                            <div class="edit">
+                                <i class="fas fa-pencil-alt" @click="edit(task)"></i>
+                            </div>
                             <div class="checkbox">
-                                <i class="far fa-check-square" v-if="task.status" @click="doneAndUndoneTask(task.title)"></i>
-                                <i class="far fa-square" @click="doneAndUndoneTask(task.title)" v-else></i>
+                                <i class="far fa-check-square" v-if="task.status" @click="changeTaskStatus(task.title)"></i>
+                                <i class="far fa-square" @click="changeTaskStatus(task.title)" v-else></i>
                             </div>
                             <div class="trashcan">
                                 <i class="fas fa-trash-alt" @click="deleteTask(task.title)"></i>
@@ -83,7 +86,7 @@
 
         </div>
 
-        <add-modal ref="addModal" id="addModal"></add-modal>
+        <add-modal ref="addModal" id="addModal" :editableDescription="editableDescription" :editableTitle="editablTitle" :theNameOfTheTaskThatShouldBeUpdated="theNameOfTheTaskThatShouldBeUpdated"></add-modal>
 
     </div>
 </template>
@@ -95,7 +98,11 @@ import msgComponent from './message.vue';
 export default {
     data: function(){
         return{
-            tasks: this.$store.state.tasks
+            tasks: this.$store.state.tasks,
+            addModalEditState: false,
+            editablTitle: null,
+            editableDescription: null,
+            theNameOfTheTaskThatShouldBeUpdated: null
         }
     },
     components: {
@@ -205,11 +212,32 @@ export default {
             }
         },
 
-        doneAndUndoneTask(title){
+        changeTaskStatus(title){
             let payload = {
                 title: title
             }
-            this.$store.dispatch('doneAndUndoneTask', payload);
+            this.$store.dispatch('changeTaskStatus', payload);
+        },
+
+        edit(task){
+            this.setAddModalForEdit(task);
+        },
+
+        setAddModalForEdit(task){
+            this.injectTaskDataIntoAddModal(task);
+            this.toggleAddModal();
+        },
+
+        injectTaskDataIntoAddModal(task){
+            this.theNameOfTheTaskThatShouldBeUpdated = task.title;
+            this.editablTitle = task.title;
+            this.editableDescription = task.description;
+        },
+
+        emptyAddModalFromProp(){
+            this.theNameOfTheTaskThatShouldBeUpdated = null;
+            this.editablTitle = null;
+            this.editableDescription = null;
         }
     },
 
@@ -312,7 +340,7 @@ div.panel-comp{
                         width: 80%;
                     }
                     div.buttons{
-                        width: 20%;
+                        width:40%;
                         display: flex;
                         justify-content: space-between;
                         font-size: 1.2rem;
