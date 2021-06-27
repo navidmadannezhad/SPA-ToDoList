@@ -50,39 +50,7 @@
                 </button>
             </div>
 
-
-
-            <div class="drop-left" ref="dropLeft">
-
-                <div class="modal-nav">
-                    <div class="menu-button">
-                        <i class="fas fa-bars" @click="toggleMenu"></i>
-                    </div>
-                </div>
-
-                    <div class="date-section">
-                    <div class="week-day">یکشنبه</div>
-                    <div class="date">
-                        <div class="day">
-                            ۲۱
-                        </div>
-                        <div class="month">
-                            شهریور
-                        </div>
-                        <div class="year">
-                            ۱۳۷۸
-                        </div>
-                    </div>
-                </div>
-
-                <div class="menu">
-                    <a href="" @click="logout">خروج از پنل</a>
-                    <router-link to="/about">درباره سازنده</router-link>
-                </div>
-
-            </div>
-
-
+            <horizontal-menu v-on:toggleMenu="toggleMenu"></horizontal-menu>
 
         </div>
 
@@ -94,6 +62,7 @@
 <script>
 import addModal from './addModal.vue';
 import msgComponent from './message.vue';
+import horizontalMenu from './horizontalMenu.vue'
 
 export default {
     data: function(){
@@ -107,7 +76,8 @@ export default {
     },
     components: {
         'add-modal': addModal,
-        'message-component': msgComponent
+        'message-component': msgComponent,
+        'horizontal-menu': horizontalMenu
     },
     methods:{
         toggleTask: function(event){
@@ -127,7 +97,7 @@ export default {
         toggleMenu: function(){
             let tasks = this.$refs.tasks;
             let backgroundIsNotBlurred = tasks.style.filter != 'blur(2px)';
-            let dropLeft = this.$refs.dropLeft;
+            let dropLeft = document.querySelector('#dropLeft');
 
             if(backgroundIsNotBlurred){
                 this.blurBackground().then(()=>{
@@ -204,11 +174,6 @@ export default {
             this.$store.dispatch('getTasks');
         },
 
-        logout(){
-            this.$store.dispatch('logout');
-            this.$router.push('/');
-        },
-
         deleteTask(title){
             let payload = {
                 title: title
@@ -265,7 +230,7 @@ export default {
 
         // close the left menu when the user clicks on any where except the menu
         window.addEventListener('click', (event) => {
-            let dropLeft = this.$refs.dropLeft;
+            let dropLeft =  document.querySelector('#dropLeft');
             let dropLeftIsOpen = dropLeft.style.width == '50%';
             let elementClasses = event.target.classList;
             let elementParentClasses = event.target.parentNode.classList;
@@ -381,56 +346,6 @@ div.panel-comp{
                 box-shadow: 0px 4px 4px rgba(0,0,0,0.25), 0px 0px 100px black;
                 i{
                     display: flex;
-                }
-            }
-        }
-
-        div.drop-left{
-            position: absolute;
-            top: 0px;
-            right: 0px;
-            width: 0px;
-            overflow: hidden;
-            height: 100%;
-            background: #141E30; 
-            background: -webkit-linear-gradient(to bottom right, #141E30, #243B55);
-            background: linear-gradient(to bottom right, #141E30, #243B55);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: all 0.25s;
-            div.modal-nav{
-                font-size: 1.2rem;
-                width: 100%;
-                padding: 30px 30px 0px 0px;
-            }
-            div.date-section{
-                padding: 30px 0px;
-                margin-top: 50px;
-                width: 80%;
-                border-bottom: 2px solid rgba(255,255,255,0.1);
-                opacity: 0.5;
-                font-size: 1.2rem;
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                div.date{
-                    display: flex;
-                    & > div{
-                        padding-left: 10px;
-                    }
-                }
-            }
-            div.menu{
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                width: 100%;
-                min-width: 150px;
-                padding: 30px;
-                a{
-                    padding-bottom: 30px;
-                    text-decoration: none;
                 }
             }
         }
