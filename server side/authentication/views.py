@@ -16,7 +16,11 @@ class Register(APIView):
 			user = User.objects.get(username=request.data['username'])
 			token = Token.objects.create(user=user)
 			token.save()
-			return Response(token.key, status=200)
+			context = {
+				'token': token.key,
+				'user': user.username
+			}
+			return Response(context, status=200)
 		else:
 			return Response(serialized.errors, status=400)
 

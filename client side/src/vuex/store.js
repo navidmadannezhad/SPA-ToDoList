@@ -30,10 +30,9 @@ export const store = new Vuex.Store({
                 },
                 method: 'POST'
             }).then(response => {
-                window.localStorage.setItem('token', response.data);
-                setTimeout(()=>{
-                    router.push({name: 'panel'});
-                },2000);
+                localStorage.setItem('user', response.data.user);
+                localStorage.setItem('token', response.data.token);
+                router.push({name:'panel'});
             }).catch(error => {
                 let messages = error.response.data;
                 state.serverMessagesBox = messages;
@@ -54,11 +53,13 @@ export const store = new Vuex.Store({
                 let successMessage = {
                     'success': ['ورود با موفقیت انجام شد']
                 }
-                localStorage.setItem('user', response.data.user)
+                localStorage.setItem('user', response.data.user);
                 localStorage.setItem('token', response.data.token);
                 state.serverMessagesBox = successMessage;
                 state.serverMessageState = true;
-
+                setTimeout(()=>{
+                    router.push({name: 'panel'});
+                }, 3000);
             }).catch(error => {
                 let messages = error.response.data;
                 state.serverMessagesBox = messages;
@@ -75,16 +76,18 @@ export const store = new Vuex.Store({
         getTasks: function(state){
             axios({
                 url: 'http://127.0.0.1:8000/api/task-list/',
-                method: 'GET',
+                method: 'POST',
+                data:{
+                    token: state.token
+                },
                 headers: {
                     'X-CSRFToken': getCookie('csrftoken'),
-                    'Authorization': `Token ${state.token}`
                 }
             }).then(response => {
                 state.tasks = response.data;
                 console.log(response.data);
             }).catch(err => {
-                console.log(err.response);
+                console.log(err.response.data);
             })
         },
 

@@ -10,7 +10,7 @@
                 </div>
                 <div class="user-info">
                     <span>سلام</span>
-                    <span> navid.mnzh!</span>
+                    <span>{{ username }}</span>
                 </div>
                 <div class="spacer"></div>
             </nav>
@@ -215,6 +215,9 @@ export default {
     computed:{
         storeTasks: function(){
             return this.$store.state.tasks;
+        },
+        username(){
+            return localStorage.getItem('user');
         }
     },
 

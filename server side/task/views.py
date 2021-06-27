@@ -11,11 +11,11 @@ from rest_framework.permissions import IsAuthenticated
 
 #done!
 class TaskList(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        tasks = Task.objects.all()
+    def post(self, request):
+        token = request.data['token']
+        user = User.objects.get(auth_token=token)
+        tasks = Task.objects.filter(user=user)
         serialized = TaskSerializer(tasks, many=True)
         return Response(serialized.data, status=200)
 
