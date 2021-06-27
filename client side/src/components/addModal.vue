@@ -94,10 +94,13 @@ export default {
                     console.log('nothing!');
                 }else{
                      this.$parent.unBlurBackground().then(()=>{
+                         setTimeout(()=>{
+                            addModal.style.top = '200px';
+                        },250);
                         setTimeout(()=>{
                             addModal.style.top = '-380px';
                             this.$parent.emptyAddModalFromProp();
-                        },250);
+                        },500);
                     });
                 }                
             }

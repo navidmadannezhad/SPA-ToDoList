@@ -154,12 +154,18 @@ export default {
                     setTimeout(()=>{
                         addModal.style.top = '200px';
                     },250);
+                    setTimeout(()=>{
+                        addModal.style.top = '180px';
+                    },500);
                 });
             }else{
                 this.unBlurBackground().then(()=>{
                     setTimeout(()=>{
-                        addModal.style.top = '-380px';
+                        addModal.style.top = '200px';
                     },250);
+                    setTimeout(()=>{
+                        addModal.style.top = '-380px';
+                    },500);
                 });
             }
         },
